@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="5 minutes">
+    <property name="logstash.path" value="/root/apache-tomcat-8.5.24/logs" />
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logstash.path}/red-envelope.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logstash.path}/red-envelope.%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <maxHistory>30</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>50MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%-20(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{32}:%L - %msg%n</Pattern>
+        </encoder>
+    </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} %X{sourceThread} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <jmxConfigurator />
+    <logger name="com.redEnvelope" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
+    <logger name="com.redEnvelope" level="INFO" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
+    <root level="INFO">
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

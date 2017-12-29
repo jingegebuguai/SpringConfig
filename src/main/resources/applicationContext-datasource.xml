@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:component-scan base-package="com.config" annotation-config="true"/>
+
+
+    <bean id="envelopeDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${db.driverClassName}"/>
+        <property name="url" value="${envelope.db.url}"/>
+        <property name="username" value="${envelope.db.username}"/>
+        <property name="password" value="${envelope.db.password}"/>
+        <property name="initialSize" value="${db.initialSize}"/>
+        <property name="maxActive" value="${db.maxActive}"/>
+        <property name="maxIdle" value="${db.maxIdle}"/>
+        <property name="minIdle" value="${db.minIdle}"/>
+        <property name="maxWait" value="${db.maxWait}"/>
+        <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"/>
+         <!--<property name="removeAbandoned" value="true" />-->
+         <!--<property name="removeAbandonedTimeout" value="120" />-->
+        <property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}"/>
+
+        <property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}"/>
+        <property name="testWhileIdle" value="true"/>
+        <!--# 检查连接有效性的SQL语句-->
+        <property name="validationQuery" value="SELECT 1 FROM dual"/>
+    </bean>
+
+    <bean id="lotteryAccountDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${db.driverClassName}"/>
+        <property name="url" value="${lottery.account.db.url}"/>
+        <property name="username" value="${lottery.account.db.username}"/>
+        <property name="password" value="${lottery.account.db.password}"/>
+        <property name="initialSize" value="${db.initialSize}"/>
+        <property name="maxActive" value="${db.maxActive}"/>
+        <property name="maxIdle" value="${db.maxIdle}"/>
+        <property name="minIdle" value="${db.minIdle}"/>
+        <property name="maxWait" value="${db.maxWait}"/>
+        <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"/>
+        <!--<property name="removeAbandoned" value="true" />-->
+        <!--<property name="removeAbandonedTimeout" value="120" />-->
+        <property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}"/>
+
+        <property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}"/>
+        <property name="testWhileIdle" value="true"/>
+        <!--# 检查连接有效性的SQL语句-->
+        <property name="validationQuery" value="SELECT 1 FROM dual"/>
+    </bean>
+
+
+    <bean id="lotteryUserDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${db.driverClassName}"/>
+        <property name="url" value="${lottery.user.db.url}"/>
+        <property name="username" value="${lottery.user.db.username}"/>
+        <property name="password" value="${lottery.user.db.password}"/>
+        <property name="initialSize" value="${db.initialSize}"/>
+        <property name="maxActive" value="${db.maxActive}"/>
+        <property name="maxIdle" value="${db.maxIdle}"/>
+        <property name="minIdle" value="${db.minIdle}"/>
+        <property name="maxWait" value="${db.maxWait}"/>
+        <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"/>
+        <!--<property name="removeAbandoned" value="true" />-->
+        <!--<property name="removeAbandonedTimeout" value="120" />-->
+        <property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}"/>
+
+        <property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}"/>
+        <property name="testWhileIdle" value="true"/>
+        <!--# 检查连接有效性的SQL语句-->
+        <property name="validationQuery" value="SELECT 1 FROM dual"/>
+    </bean>
+
+
+    <!-- 数据库连接池 -->
+    <bean id="dynamicDataSource" class="com.config.utils.DynamicDataSource">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry value-ref="envelopeDataSource" key="envelopeDataSource" />
+                <entry value-ref="lotteryAccountDataSource" key="lotteryAccountDataSource" />
+                <entry value-ref="lotteryUserDataSource" key="lotteryUserDataSource" />
+            </map>
+        </property>
+
+        <!-- 默认使用productDataSource的数据源 -->
+        <property name="defaultTargetDataSource" ref="envelopeDataSource" />
+    </bean>
+
+
+    <!--&lt;!&ndash;配置使用mybatis-pagehelper&ndash;&gt;-->
+    <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="dynamicDataSource"/>-->
+        <!--<property name="configLocation" value="" />-->
+        <!--<property name="mapperLocations" value="classpath:mappers/*.xml"/>-->
+        <!--<property name="plugins">-->
+            <!--<array>-->
+                <!--<bean class="com.github.pagehelper.PageInterceptor">-->
+                    <!--<property name="properties">-->
+                        <!--<value>-->
+                            <!--params=value1-->
+                        <!--</value>-->
+                    <!--</property>-->
+                <!--</bean>-->
+            <!--</array>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--mybatis注入映射器-->
+    <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.redEnvelope.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+
+    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+
+
+
+</beans>
